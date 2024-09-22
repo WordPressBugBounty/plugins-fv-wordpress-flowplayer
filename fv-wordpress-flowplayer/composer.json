@@ -1,0 +1,23 @@
+{
+  "config": {
+    "platform": {
+        "php": "7.4"
+    }
+  },
+  "require-dev": {
+    "mockery/mockery": "dev-main",
+    "yoast/phpunit-polyfills": "dev-main"
+  },
+  "require": {
+    "aws/aws-sdk-php": "^3.235"
+  },
+  "scripts": {
+    "pre-autoload-dump": "Aws\\Script\\Composer\\Composer::removeUnusedServices"
+  },
+  "extra": {
+    "aws/aws-sdk-php": [
+      "S3",
+      "CloudFront"
+    ]
+  }
+}
