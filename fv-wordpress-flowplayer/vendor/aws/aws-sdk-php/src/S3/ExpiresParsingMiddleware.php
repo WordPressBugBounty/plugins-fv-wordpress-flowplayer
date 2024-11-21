@@ -3,16 +3,15 @@ namespace Aws\S3;
 
 use Aws\CommandInterface;
 use Aws\ResultInterface;
-use Aws\S3\Exception\PermanentRedirectException;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * Throws a PermanentRedirectException exception when a 301 redirect is
- * encountered.
+ * Logs a warning when the `expires` header
+ * fails to be parsed.
  *
  * @internal
  */
-class PermanentRedirectMiddleware
+class ExpiresParsingMiddleware
 {
     /** @var callable  */
     private $nextHandler;
@@ -41,18 +40,13 @@ class PermanentRedirectMiddleware
     {
         $next = $this->nextHandler;
         return $next($command, $request)->then(
-            function (ResultInterface $result) use ($command) {
-                $status = isset($result['@metadata']['statusCode'])
-                    ? $result['@metadata']['statusCode']
-                    : null;
-                if ($status == 301) {
-                    throw new PermanentRedirectException(
-                        'Encountered a permanent redirect while requesting '
-                        . $result->search('"@metadata".effectiveUri') . '. '
-                        . 'Are you sure you are using the correct region for '
-                        . 'this bucket?',
-                        $command,
-                        ['result' => $result]
+            function (ResultInterface $result) {
+                if (empty($result['Expires']) && !empty($result['ExpiresString'])) {
+                    trigger_error(
+                        "Failed to parse the `expires` header as a timestamp due to "
+                        . " an invalid timestamp format.\nPlease refer to `ExpiresString` "
+                        . "for the unparsed string format of this header.\n"
+                        , E_USER_WARNING
                     );
                 }
                 return $result;
