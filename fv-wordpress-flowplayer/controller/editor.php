@@ -27,8 +27,10 @@ function fv_player_shortcode_editor_scripts_enqueue() {
 
   wp_localize_script( 'fvwpflowplayer-shortcode-editor', 'fv_player_editor_conf', array(
     'admin_url' => admin_url('admin.php?page=fv_player'),
-    'home_url' => home_url('/'),
-    'db_import_nonce' => wp_create_nonce( "fv-player-db-import-".get_current_user_id() ),
+    'ajax_url'  => admin_url('admin-ajax.php'),
+    'home_url'  => home_url('/'),
+    // Only hand out the import nonce to users who may use the Import UI / AJAX action.
+    'db_import_nonce' => current_user_can( 'edit_others_posts' ) ? wp_create_nonce( 'fv-player-db-import-' . get_current_user_id() ) : '',
     'db_load_nonce' => wp_create_nonce( "fv-player-db-load-".get_current_user_id() ),
     'preview_nonce' => wp_create_nonce( "fv-player-preview-".get_current_user_id() ),
     'retrieve_video_data_nonce' => wp_create_nonce( "fv-player-retrieve_video_data" ),

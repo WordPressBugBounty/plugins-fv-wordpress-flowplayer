@@ -270,6 +270,13 @@ class FV_Player_Custom_Videos_Master {
   }
   
   function bbpress_edit() {
+    global $fv_fp;
+
+    // Match bbpress_profile() / user_profile() — do not expose the editor (or its nonces) unless profile videos are enabled.
+    if ( ! isset( $fv_fp->conf['profile_videos_enable_bio'] ) || $fv_fp->conf['profile_videos_enable_bio'] !== 'true' ) {
+      return;
+    }
+
     ?>
     </fieldset>
     
@@ -358,6 +365,9 @@ class FV_Player_Custom_Videos_Master {
 
           // Remove attributes that allow HTML
           $video = preg_replace( '~\b(ad|popup)\s*?=\s*\\\?\s*?["\'][^"\']*["\']~', '', wp_unslash( $video ) );
+
+          // Remove attributes even if the quotes are missing
+          $video = preg_replace( '~\s*?\b(ad|popup)\s*?=\s*?\S*?([\s\]])~', '$2', $video );
 
           add_user_meta( $update_user_id, $meta, $video );
         }
