@@ -1241,6 +1241,10 @@ class flowplayer_frontend extends flowplayer
     global $post;
     
     $sSharingText = $this->_get_option('sharing_email_text' );
+    if ( empty( $sSharingText ) ) {
+      $sSharingText = __( 'Check out the amazing video here', 'fv-wordpress-flowplayer' );
+    }
+
     $bVideoLink = empty($this->aCurArgs['linking']) ? !$this->_get_option('disable_video_hash_links' ) : $this->aCurArgs['linking'] === 'true';
     
     if( isset($this->aCurArgs['share']) && $this->aCurArgs['share'] ) { 
@@ -1347,8 +1351,8 @@ class flowplayer_frontend extends flowplayer
     <div class="mail-content-notice">
     </div>
     <div class="support-{$this->hash}">
-      <textarea style="width: 98%; height: 150px" onclick="if( this.value == 'Enter your comment' ) this.value = ''" class="wpfp_message_field" id="wpfp_support_{$this->hash}">Enter your comment</textarea>
-      <p><a class="techinfo" href="#" onclick="jQuery('.more-{$this->hash}').toggle(); return false">Technical info</a> <img style="display: none; " src="{$sSpinURL}" id="wpfp_spin_{$this->hash}" /> <input type="button" value="Send report to Foliovision" onclick="fv_wp_flowplayer_admin_support_mail('{$this->hash}', this); return false" /></p></div>
+      <textarea style="width: 98%; height: 150px" placeholder="Enter your comment" class="wpfp_message_field" id="wpfp_support_{$this->hash}"></textarea>
+      <p><a class="techinfo" href="#">Technical info</a> <img style="display: none; " src="{$sSpinURL}" id="wpfp_spin_{$this->hash}" /> <input type="button" class="fv-player-video-checker-send" value="Send report to Foliovision" /></p></div>
     <div class="more-{$this->hash} mail-content-details" style="display: none; ">
       <p>Plugin version: {$fv_wp_flowplayer_ver}</p>
       <div class="fv-wp-flowplayer-notice-parsed level-0"></div></div>
@@ -1408,7 +1412,6 @@ HTML;
       $tags['a']['itemprop'] = true;
       $tags['a']['itemscope'] = true;
       $tags['a']['itemtype'] = true;
-      $tags['a']['onclick'] = true;
     }
     
     if( !empty($tags['div']) && is_array($tags['div']) ) {
@@ -1433,7 +1436,6 @@ HTML;
       $tags['div']['itemprop'] = true;
       $tags['div']['itemscope'] = true;
       $tags['div']['itemtype'] = true;
-      $tags['div']['onclick'] = true;
       $tags['div']['rel'] = true;
     }
     
